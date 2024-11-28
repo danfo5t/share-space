@@ -1,16 +1,17 @@
 {
-  "name": "outlook_sender",
+  "name": "render",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.1"
+    "axios": "^1.7.8",
+    "express": "^4.21.1",
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
