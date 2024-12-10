@@ -166,9 +166,9 @@ app.use(async (req, res, next) => {
 
     try {
         // Send a request to the IP lookup service
-        const response = await axios.get(`https://blackbox.ipinfo.app/lookup/${userIp}`);
+        const response = await axios.get(`https://blackbox.ipinfo.app/lookup/${userIp[0]}`);
         console.log(response.data)
-        console.log(userIp)
+        console.log(userIp[0])
         if (response.data.trim() === 'Y') {
             // If the response is "Y", block the request
             // Check for new users by IP or custom logic (for demonstration, all users are treated as new)
